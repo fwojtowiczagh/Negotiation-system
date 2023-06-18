@@ -1,0 +1,84 @@
+{% extends "base_consumer.html" %} {% block title %}Main Page{% endblock %} {% block content
+    %}
+
+    <title>Producers</title>
+  <style>
+    .producer-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .producer {
+    text-align: center;
+    margin: 10px;
+  }
+
+  .producer-name {
+    font-weight: bold;
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 5px;
+  }
+
+  .view-button {
+    display: inline-block;
+    padding: 0.5em 1em;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .view-button:hover {
+    background-color: #45a049;
+  }
+
+  .text-center {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  </style>
+      
+
+
+<!-- {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for message, category in messages %}
+            {% if category == 'error' %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ message[1] }}
+                    <button type="button" class="close" data-dismiss="alert">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% elif category == 'success' %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ message[1] }}
+                    <button type="button" class="close" data-dismiss="alert">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endwith %} -->
+
+        <h1 class="text-center">Producers</h1>
+
+        <div class="producers-list">
+          {% for producer in producers %}
+            <div class="producer">
+              <input type="hidden" name="producer_id_{{ producer[0] }}" value="{{ producer[0] }}">
+              <span class="producer-name">{{ producer[1] }}</span>
+              <a class="edit-button" href="{{ url_for('consumer.show_products', producer_id=producer[0]) }}">View Products</a>
+              
+            </div>
+          {% endfor %}
+        </div>
+
+{% endblock %}

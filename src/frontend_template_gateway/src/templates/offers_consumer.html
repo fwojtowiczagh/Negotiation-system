@@ -1,0 +1,245 @@
+{% extends "base_consumer.html" %} {% block title %}Main Page{% endblock %} {% block content
+    %}
+
+    <style>
+        /* Styles for the product squares */
+        .product-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.product {
+  flex: 0 0 200px;
+  margin: 0 10px 20px 0;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f7f7f7;
+  text-align: center;
+}
+
+.product h3 {
+  font-size: 18px;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #333;
+}
+
+.product p {
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: #666;
+}
+
+.product .delete-button {
+  display: inline-block;
+  padding: 0.5em 1em;
+  background-color: #dc3545;
+  color: white;
+  text-decoration: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.product .delete-button:hover {
+  background-color: #c82333;
+}
+
+.product .offer-button {
+  display: inline-block;
+  padding: 0.5em 1em;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.product .offer-button:hover {
+  background-color: #0056b3;
+}
+
+.purchase-button {
+  display: block;
+  position: fixed;
+  top: 55px;
+  right: 465px;
+  padding: 0.5em 1em;
+  background-color: #28a745;
+  color: white;
+  text-decoration: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.purchase-button:hover {
+  background-color: #218838;
+}
+
+.text-center {
+  text-align: center;
+  margin-bottom: 20px;
+}
+      </style>
+
+      <h1 class="text-center">Offers</h1>
+      
+      <form action="/consumer/offers" method="POST">
+        {% for product in products %}
+          <div class="product">
+            <input type="hidden" name="id_{{ product.id }}" value="{{ product.id }}">
+            <input type="hidden" name="producer_id_{{ product.id }}" value="{{ product.producer_id }}">
+      
+            <h3>{{ product.product_name }}</h3>
+            <p>Actuall offered price: ${{ product.price }}</p>
+      
+            <input type="hidden" name="product_name_{{ product.id }}" value="{{ product.product_name }}">
+            <input type="hidden" name="price_{{ product.id }}" value="{{ product.price }}">
+            <input type="hidden" name="product_id_{{ product.id }}" value="{{ product.product_id }}">
+            <input type="hidden" name="user_id_{{ product.id }}" value="{{ product.user_id }}">
+            <input type="hidden" name="send_to_{{ product.id }}" value="{{ product.send_to }}">
+            <input type="hidden" name="status_{{ product.id }}" value="{{ product.status }}">
+      
+            <!-- Additional buttons or form elements for performing actions with the product -->
+
+            <!-- <button type="submit" class="delete-button" name="action" value="delete">Delete</button>
+            <a class="edit-button" href="/edit/{{ product.id }}">Edit</a> -->
+
+            {% if product.status == 'offer_by_producer' or product.status == 'accepted_by_producer'%}
+                <!-- <a class="edit-button" href="/offers/{{ product.user_id }}/counteroffer/{{ product.id }}">Counter offer</a> -->
+                <div class="form-field">
+                  <label id="label_{{ product.id }}" for="quantity_{{ product.id }}">Choose the amount:</label>
+                  <input type="number" id="quantity_{{ product.id }}" name="quantity_{{ product.id }}" step="1" min="0">
+                  <button type="submit" class="offer-button" id="button_accept_{{ product.id }}" name="submit" value="accepted_{{ product.id }}" >Accept</button>
+                </div>
+                <!-- <button type="submit" class="offer-button" id="button_accept_{{ product.id }}" name="submit" value="accepted_{{ product.id }}" >Accept</button> -->
+                <button type="submit" class="offer-button" id="button_decline_{{ product.id }}" name="submit" value="declined_{{ product.id }}" >Decline</button>
+            {% elif product.status == 'offer_by_consumer' %}
+                <!-- onload="deleteItemFromLocalStorage('producer' + '{{ product.id }}')" -->
+                <!-- <div data-product-id="{{ product.id }}"></div> -->
+                <p>Waiting for the response</p>
+                
+            {% elif product.status == 'accepted_by_consumer' or product.status == 'declined_by_consumer' or product.status == 'declined_by_producer'%}
+                <button type="submit" class="delete-button" id="button_delete_{{ product.id }}" name="submit" value="delete_{{ product.id }}">Delete</button>
+                <div data-product-id="{{ product.id }}"></div>
+            {% endif %}
+
+          </div>
+        {% endfor %}
+      </form>
+      <!-- {% if isButtonDisabled %}style="display: none;"{% endif %} -->
+      <!-- <script>
+        // Read the flag value from localStorage
+        var isButtonDisabled = localStorage.getItem('isButtonDisabled');
+      
+        // Set the flag if it doesn't exist in localStorage
+        if (isButtonDisabled === null) {
+          isButtonDisabled = {% if isButtonDisabled %}true{% else %}false{% endif %};
+          localStorage.setItem('isButtonDisabled', isButtonDisabled);
+        }
+      
+        // Disable the buttons based on the flag value
+        var buttons = document.querySelectorAll('.counter-button, .accepted-button, .declined-button');
+        buttons.forEach(function(button) {
+          button.disabled = (isButtonDisabled === 'true');
+        });
+      </script> -->
+
+      <script>
+        {% if isButtonDisabled %}
+    // Set the isButtonDisabled value in local storage
+          let key = "{{ isButtonDisabled[0] }}";
+          let value = "{{ isButtonDisabled[1] }}";
+          localStorage.setItem(key, value);
+        // {% else %}
+        //   localStorage.setItem('isButtonDisabled', 'false');
+        {% endif %}
+        // if (isButtonDisabled === true || isButtonDisabled === false){
+        //   localStorage.setItem('isButtonDisabled', isButtonDisabled);
+        // }
+        // Check if the isButtonDisabled value is stored in local storage
+
+        function getItemsWithPrefix(prefix) {
+          let items = [];
+          for (let i = 0; i < localStorage.length; i++) {
+            let key = localStorage.key(i);
+            console.log(key);
+            if (key.startsWith(prefix)) {
+              let value = localStorage.getItem(key);
+              let item = value;
+              console.log(value);
+              items.push(item);
+            }
+          }
+          return items;
+        }
+
+        let producerItems = getItemsWithPrefix("consumer");
+
+        producerItems.forEach(function(item){
+          let buttons = document.querySelectorAll(`#label_${item}, #quantity_${item}, #button_accept_${item}, #button_decline_${item}`);
+          buttons.forEach(function(button){
+            button.style.display = 'none';
+          })
+          // let acceptButton = document.getElementById(`button_accept_${item}`);
+          // let declineButton = document.getElementById(`button_decline_${item}`);
+          // let offerButton = document.getElementById(`button_offer_${item}`);
+          // let priceInput = document.getElementById(`input_price_${item}`);
+          // let priceLabel = document.getElementById(`label_price_${item}`);
+          
+          // acceptButton.style.display = 'none';
+          // declineButton.style.display = 'none';
+          // offerButton.style.display = 'none';
+          // priceInput.style.display = 'none';
+          // priceLabel.style.display = 'none';
+        })
+
+        // var isDisabled = localStorage.getItem('isButtonDisabled');
+      
+        // // If isButtonDisabled value is not null or undefined, set the disabled state of buttons
+        // if (isDisabled !== null && isDisabled !== undefined) {
+        //   var buttons = document.querySelectorAll('.counter-button, .accepted-button, .declined-button, .price-label, .price-input');
+        //   buttons.forEach(function(button) {
+        //     if (isDisabled === 'true'){
+        //       button.style.display = 'none';
+        //     }else {
+        //       button.style.display = 'block';
+        //     }
+        //     // button.disabled = isButtonDisabled === 'true';
+        //   });
+        // }
+
+        // let message = document.getElementById("message");
+        // document.addEventListener("DOMContentLoaded", deleteItemFromLocalStorage());
+
+        // window.addEventListener('DOMContentLoaded', function() {
+        //     let messageElement = document.getElementById('message');
+        //     let productId = messageElement.getAttribute('data-product-id');
+        //     deleteItemFromLocalStorage('producer' + productId);
+        // });
+
+        window.addEventListener('DOMContentLoaded', function() {
+          let messageElements = document.querySelectorAll('[data-product-id]');
+          messageElements.forEach(function(messageElement) {
+            let productId = messageElement.getAttribute('data-product-id');
+            deleteItemFromLocalStorage('consumer' + productId);
+          });
+        });
+
+        function deleteItemFromLocalStorage(itemId) {
+          // Check if the item exists in localStorage
+          if (localStorage.getItem(itemId)) {
+            // Delete the item from localStorage
+            localStorage.removeItem(itemId);
+          }
+        }
+
+        // localStorage.clear();
+      </script>
+
+{% endblock %}

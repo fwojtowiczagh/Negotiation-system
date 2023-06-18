@@ -1,0 +1,44 @@
+version: '3.8'
+services:
+  backend_negotiator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      FLASK_APP: negotiator.py
+    command: sh -c "python negotiator.py"
+    ports:
+      - 8003:8003
+    volumes:
+      - .:/app
+    depends_on:
+      - db_negotiator
+      # - rabbitmq
+
+  offer_queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: 'python -u receive_offer.py'
+    depends_on:
+      - db_negotiator
+      # - rabbitmq
+
+  # rabbitmq:
+  #   image: rabbitmq:3.9
+  #   ports:
+  #     - 5674:5672
+  #     - 15674:15672
+
+  db_negotiator:
+    image: mysql:5.7.22
+    restart: always
+    environment:
+      MYSQL_DATABASE: negotiator
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - .dbdata:/var/lib/mysql
+    ports:
+      - 33069:3306

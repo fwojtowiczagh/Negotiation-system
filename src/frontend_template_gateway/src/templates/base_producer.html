@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign Up</title>
+     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      crossorigin="anonymous"
+    />
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0/css/bootstrap.min.css"> -->
+
+    <style>
+        /* Styles for the form container */
+        .form-container {
+          max-width: 400px;
+          margin: 0 auto;
+          padding: 20px;
+          background-color: #f7f7f7;
+          border: 1px solid #ddd;
+          border-radius: 5px;
+        }
+      
+        /* Styles for form fields */
+        .form-field {
+          margin-bottom: 20px;
+        }
+      
+        .form-field label {
+          display: block;
+          margin-bottom: 5px;
+          font-weight: bold;
+        }
+      
+        .form-field input {
+          width: 100%;
+          padding: 8px;
+          border: 1px solid #ddd;
+          border-radius: 3px;
+          outline: none;
+        }
+      
+        /* Styles for the submit button */
+        .form-field .submit-button {
+          background-color: #4caf50;
+          color: #fff;
+          padding: 10px 20px;
+          border: none;
+          border-radius: 3px;
+          cursor: pointer;
+        }
+      
+        .form-field .submit-button:hover {
+          background-color: #45a049;
+        }
+
+        /* Styles for radio buttons */
+        .form-field .radio-container {
+          display: flex;
+          align-items: center;
+        }
+      
+        .form-field .radio-container label {
+          display: flex;
+          align-items: center;
+          margin-right: 10px;
+        }
+      
+        .form-field .radio-container label input[type="radio"] {
+          margin-right: 5px;
+        }
+
+        .navbar.fixed-top {
+          position: sticky;
+          top: 0;
+          z-index: 100;
+        }
+      </style>
+
+</head>
+
+<!-- {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for message, category in messages %}
+            {% if category == 'error' %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ message[1] }}
+                    <button type="button" class="close" data-dismiss="alert">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% elif category == 'success' %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ message[1] }}
+                    <button type="button" class="close" data-dismiss="alert">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endwith %} -->
+<body>
+
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#navbar"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbar">
+            <div class="navbar-nav">
+              <a class="nav-item nav-link" id="logout" href="/logout">Logout</a>
+            </div>
+
+            <div class="navbar-nav">
+              <a class="nav-item nav-link" id="create" href="/create">Create product</a>
+            </div>
+
+            <div class="navbar-nav">
+              <a class="nav-item nav-link" id="products" href="/products">Products</a>
+            </div>
+
+            <div class="navbar-nav">
+              <a class="nav-item nav-link" id="offers" href="/offers">Offers</a>
+            </div>
+
+            <!-- <div class="navbar-nav">
+              <a class="nav-item nav-link" id="notification" href="/logout">Notification</a>
+            </div> -->
+
+          </div>
+        </nav>
+
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+          messages %} {% for category, message in messages %} {% if category ==
+          'error' %}
+          <div class="alert alert-danger alter-dismissable fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          {% else %}
+          <div class="alert alert-success alter-dismissable fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          {% endif %} {% endfor %} {% endif %} {% endwith %}
+
+        <div class="form-container">{% block content %} {% endblock %}</div>
+
+        <!-- <div class="form-container" id="counter"></div> -->
+
+        <!-- <script>
+            // Create an EventSource to listen for SSE events
+            // let eventSource = new EventSource('/events');
+
+            // // Handle SSE events
+            // eventSource.onmessage = function(event) {
+            //     // Parse the SSE event data
+            //     let eventData = JSON.parse(event.data);
+
+            //     // Update the UI with the event data
+            //     let eventContainer = document.getElementById('event-container');
+            //     let eventElement = document.createElement('p');
+            //     eventElement.textContent = eventData.message;
+            //     eventContainer.appendChild(eventElement);
+            // };
+
+            let targetContainer = document.getElementById("counter");
+            let eventSource = new EventSource("/stream");
+            eventSource.addEventListener = ("online", function(e) {
+                targetContainer.innerHTML = e.data;
+            });
+
+        </script> -->
+
+    <script
+    src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"
+  ></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"
+  ></script>
+  <script
+    src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"
+  ></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+</body>
+</html>
+
+
+<!-- <label for="role" class="form-label">Role:</label> -->
+
+

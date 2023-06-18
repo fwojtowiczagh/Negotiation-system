@@ -1,0 +1,53 @@
+version: '3.8'
+services:
+  backend_producer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      FLASK_APP: producer.py
+      RABBITMQ_HOST: rabbitmq_producer
+    command: sh -c "python producer.py"
+    ports:
+      - 8001:8001
+    volumes:
+      - .:/app
+    depends_on:
+      - db_producer
+      # - rabbitmq_producer
+    # networks:
+    #   - mynetwork
+    # networks:
+    #   - prod_net
+
+  # rabbitmq_producer:
+  #   image: rabbitmq:management
+  #   # domainname: rabbitmq.com
+  #   ports:
+  #     - 5672:5672
+  #     - 15672:15672
+
+  db_producer:
+    image: mysql:5.7.22
+    restart: always
+    environment:
+      MYSQL_DATABASE: producer
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - .dbdata:/var/lib/mysql
+    ports:
+      - 33067:3306
+    # networks:
+    #   - mynetwork  # there is another option!!!
+    # networks:
+    #   - prod_net
+
+# networks:
+#   prod_net:
+#     name: prod_cons_net
+# networks:
+#   mynetwork:
+#     external: 
+#       name: mynetwork

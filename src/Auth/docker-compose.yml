@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  backend_auth:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      FLASK_APP: auth.py
+    command: sh -c "python auth.py"
+    ports:
+      - 8004:8004
+    volumes:
+      - .:/app
+    depends_on:
+      - db_auth
+
+  db_auth:
+    image: mysql:5.7.22
+    restart: always
+    environment:
+      MYSQL_DATABASE: auth
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - .dbdata:/var/lib/mysql
+    ports:
+      - 33068:3306

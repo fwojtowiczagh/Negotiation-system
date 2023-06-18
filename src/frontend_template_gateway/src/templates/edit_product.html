@@ -1,0 +1,27 @@
+{% extends "base_producer.html" %} {% block title %}Main Page{% endblock %} {% block content
+    %}
+
+    <form action="/edit/{{ product_id }}" method="POST">
+
+        <div class="form-field">
+          <label for="name">Change name of the product:</label>
+          <input type="text" id="name" name="name">
+        </div>
+    
+        <div class="form-field">
+          <label for="price">Change price:</label>
+          <input type="number" id="price" name="price" step="0.01" min="0">
+        </div>
+    
+        <div class="form-field">
+          <label for="quantity">Change quantity:</label>
+          <input type="number" id="quantity" name="quantity" min="0">
+        </div>
+    
+        <div class="form-field">
+          <button type="submit" class="submit-button" value="Create Product">Update Product</button>
+        </div>
+    
+      </form>
+
+{% endblock %}

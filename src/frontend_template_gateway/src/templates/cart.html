@@ -1,0 +1,138 @@
+{% extends "base_consumer.html" %} {% block title %}Main Page{% endblock %} {% block content
+    %}
+
+  <style>
+    .product-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.product {
+  flex: 0 0 200px;
+  margin: 0 10px 20px 0;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f7f7f7;
+  text-align: center;
+}
+
+.product h3 {
+  font-size: 18px;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #333;
+}
+
+.product p {
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: #666;
+}
+
+.product .delete-button {
+  display: inline-block;
+  padding: 0.5em 1em;
+  background-color: #dc3545;
+  color: white;
+  text-decoration: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.product .delete-button:hover {
+  background-color: #c82333;
+}
+
+.product .cart-button {
+  display: inline-block;
+  padding: 0.5em 1em;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.product .cart-button:hover {
+  background-color: #0056b3;
+}
+
+.purchase-button {
+  display: block;
+  position: fixed;
+  top: 55px;
+  right: 465px;
+  padding: 0.5em 1em;
+  background-color: #28a745;
+  color: white;
+  text-decoration: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.purchase-button:hover {
+  background-color: #218838;
+}
+
+.text-center {
+  text-align: center;
+  margin-bottom: 20px;
+}
+  </style>
+
+
+<!-- {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for message, category in messages %}
+            {% if category == 'error' %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ message[1] }}
+                    <button type="button" class="close" data-dismiss="alert">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% elif category == 'success' %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ message[1] }}
+                    <button type="button" class="close" data-dismiss="alert">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endwith %} -->
+
+        <h1 class="text-center">Cart</h1>
+
+        <form action="/consumer/cart" method="POST">
+          {% for item in items %}
+            <div class="product">
+              <input type="hidden" name="item_id_{{ item.id }}" value="{{ item.id }}">
+
+              <h3>{{ item.product_name }}</h3>
+              <p>Price: ${{ item.price }}</p>
+              <p>Quantity: {{ item.quantity }}</p>
+
+              <button type="submit" class="delete-button" name="submit" value="delete_{{ item.id  }}">Delete</button>
+
+              <div class="form-field">
+                <label for="add_quantity_{{ item.id }}">Add/Subtract the amount:</label>
+                <input type="number" id="add_quantity_{{ item.id }}" name="add_quantity_{{ item.id }}" step="1">
+                <button type="submit" class="cart-button" name="submit" value="add_quantity_{{ item.id }}">Add/Subtract</button>
+            </div>
+              
+            </div>
+          {% endfor %}
+            
+          <button type="submit" class="purchase-button" name="submit" value="purchase">Purchase</button>
+
+        </form>
+
+{% endblock %}

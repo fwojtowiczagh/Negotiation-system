@@ -1,0 +1,45 @@
+version: '3.8'
+services:
+  backend_consumer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      FLASK_APP: consumer.py
+    command: sh -c "python consumer.py"
+    ports:
+      - 8002:8002
+    volumes:
+      - .:/app
+    depends_on:
+      - db_consumer
+      # - rabbitmq
+    # networks:
+    #   - cons_prod_net
+
+  # rabbitmq_producer:
+  #   image: rabbitmq:management
+  #   # domainname: rabbitmq.com
+  #   ports:
+  #     - 5672:5672
+  #     - 15672:15672
+
+  db_consumer:
+    image: mysql:5.7.22
+    restart: always
+    environment:
+      MYSQL_DATABASE: consumer
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - .dbdata:/var/lib/mysql
+    ports:
+      - 33066:3306
+    # networks:
+    #   - cons_prod_net
+
+# networks:
+#   cons_prod_net:
+#     external:
+#       name: prod_cons_net
