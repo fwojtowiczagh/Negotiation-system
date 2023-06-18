@@ -23,16 +23,6 @@ CORS(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-# url = 'amqps://etsrqkzu:i9KtLs0FqK0gVoVPAt_n65AzypRIfwE5@rat.rmq2.cloudamqp.com/etsrqkzu'
-# connection = pika.BlockingConnection(pika.URLParameters(url))
-# # connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq_producer', 5672))  # works, but first docker-compose only the queue!
-# channel = connection.channel()
-# channel.exchange_declare(exchange='alerts', exchange_type='topic')
-# channel.exchange_declare(exchange='message', exchange_type='topic')
-
-# channel.queue_declare(queue='consumer_to_negotiator', durable=True)
-# channel.queue_declare(queue='negotiator_to_consumer', durable=True)
-
 def role_required(role):
     def decorator(f):
         @wraps(f)
@@ -233,7 +223,7 @@ def make_offer(user_id, producer_id, product_id):
     data["status"] = "offer_by_consumer"
     print(data)
 
-    url = 'amqps://etsrqkzu:i9KtLs0FqK0gVoVPAt_n65AzypRIfwE5@rat.rmq2.cloudamqp.com/etsrqkzu'
+    url = 'your_own'
     connection = pika.BlockingConnection(pika.URLParameters(url))
     # connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq_producer'))
     channel = connection.channel()
@@ -264,7 +254,7 @@ def accept_offer(user_id, product_id):
         db.session.add(product)
     db.session.commit()
 
-    url = 'amqps://etsrqkzu:i9KtLs0FqK0gVoVPAt_n65AzypRIfwE5@rat.rmq2.cloudamqp.com/etsrqkzu'
+    url = 'your_own'
     connection = pika.BlockingConnection(pika.URLParameters(url))
     # connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq_producer'))
     channel = connection.channel()
@@ -283,7 +273,7 @@ def decline_offer(user_id, product_id):
     data["send_to"] = "producer"
     data["status"] = "declined_by_consumer"
 
-    url = 'amqps://etsrqkzu:i9KtLs0FqK0gVoVPAt_n65AzypRIfwE5@rat.rmq2.cloudamqp.com/etsrqkzu'
+    url = 'your_own'
     connection = pika.BlockingConnection(pika.URLParameters(url))
     # connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq_producer'))
     channel = connection.channel()
@@ -292,42 +282,6 @@ def decline_offer(user_id, product_id):
     channel.basic_publish(exchange='alerts', routing_key="producer"+"."+str(data.get("producer_id")), body=json.dumps(data))
     connection.close()
     return jsonify({'message': 'Offer declined.'}), 201
-
-
-# @app.route('/stream/notifications/<int:user_id>')
-# @role_required('consumer')
-# def stream_notifications(user_id):
-#     def event_generator():
-#         url = 'amqps://etsrqkzu:i9KtLs0FqK0gVoVPAt_n65AzypRIfwE5@rat.rmq2.cloudamqp.com/etsrqkzu'
-#         connection = pika.BlockingConnection(pika.URLParameters(url))
-#         # connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq_producer', 5672))  # works, but first docker-compose only the queue!
-#         channel = connection.channel()
-#         channel.exchange_declare(exchange='message', exchange_type='topic')
-        
-#         result = channel.queue_declare(queue='', exclusive=True)
-#         queue_name = result.method.queue
-#         channel.queue_bind(exchange='message', queue=queue_name, routing_key=f"consumer.{user_id}")
-
-#         # Continuously consume messages from RabbitMQ
-#         def callback(ch, method, properties, body):
-#             # Process the message and prepare SSE data
-#             data = json.loads(body)
-
-#             # Yield the SSE event data
-#             yield 'data: {}\n\n'.format(data)
-
-#             ch.basic_ack(delivery_tag=method.delivery_tag)
-
-
-#         # Start consuming messages from RabbitMQ
-#         channel.basic_consume(queue=queue_name, on_message_callback=callback)
-
-
-#         # Continuously process messages
-#         while True:
-#             connection.process_data_events()
-
-#     return Response(event_generator(), mimetype='text/event-stream')
 
 
 if __name__ == '__main__':

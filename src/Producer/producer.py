@@ -24,16 +24,6 @@ CORS(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-# url = 'amqps://etsrqkzu:i9KtLs0FqK0gVoVPAt_n65AzypRIfwE5@rat.rmq2.cloudamqp.com/etsrqkzu'
-# connection = pika.BlockingConnection(pika.URLParameters(url))
-# # connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq_producer', 5672))  # works, but first docker-compose only the queue!
-# channel = connection.channel()
-# channel.exchange_declare(exchange='alerts', exchange_type='topic')
-# channel.exchange_declare(exchange='message', exchange_type='topic')
-
-# channel.queue_declare(queue='producer_to_negotiator', durable=True)
-# channel.queue_declare(queue='negotiator_to_producer', durable=True)
-
 
 def role_required(role):
     def decorator(f):
@@ -204,7 +194,7 @@ def make_counter_offer(producer_id, offer_id):
     data["send_to"] = "consumer"
     data["status"] = "offer_by_producer"
     
-    url = 'amqps://etsrqkzu:i9KtLs0FqK0gVoVPAt_n65AzypRIfwE5@rat.rmq2.cloudamqp.com/etsrqkzu'
+    url = 'your_own'
     connection = pika.BlockingConnection(pika.URLParameters(url))
     # connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq_producer', 5672))  # works, but first docker-compose only the queue!
     channel = connection.channel()
@@ -222,7 +212,7 @@ def accept_offer(producer_id, offer_id):
     data["send_to"] = "consumer"
     data["status"] = "accepted_by_producer"
 
-    url = 'amqps://etsrqkzu:i9KtLs0FqK0gVoVPAt_n65AzypRIfwE5@rat.rmq2.cloudamqp.com/etsrqkzu'
+    url = 'your_own'
     connection = pika.BlockingConnection(pika.URLParameters(url))
     # connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq_producer', 5672))  # works, but first docker-compose only the queue!
     channel = connection.channel()
@@ -241,7 +231,7 @@ def decline_offer(producer_id, offer_id):
     data["send_to"] = "consumer"
     data["status"] = "declined_by_producer"
 
-    url = 'amqps://etsrqkzu:i9KtLs0FqK0gVoVPAt_n65AzypRIfwE5@rat.rmq2.cloudamqp.com/etsrqkzu'
+    url = 'your_own'
     connection = pika.BlockingConnection(pika.URLParameters(url))
     # connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq_producer', 5672))  # works, but first docker-compose only the queue!
     channel = connection.channel()
@@ -250,42 +240,6 @@ def decline_offer(producer_id, offer_id):
     channel.basic_publish(exchange='alerts', routing_key="consumer"+"."+str(data.get('user_id')), body=json.dumps(data))
     connection.close()
     return jsonify({'message': 'Offer declined.'}), 201
-
-
-# @app.route('/stream/notifications/<int:producer_id>')
-# @role_required('producer')
-# def stream_notifications(producer_id):
-#     def event_generator():
-#         # url = 'amqps://etsrqkzu:i9KtLs0FqK0gVoVPAt_n65AzypRIfwE5@rat.rmq2.cloudamqp.com/etsrqkzu'
-#         # connection = pika.BlockingConnection(pika.URLParameters(url))
-#         # # connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq_producer', 5672))  # works, but first docker-compose only the queue!
-#         # channel = connection.channel()
-#         # channel.exchange_declare(exchange='message', exchange_type='topic')
-        
-#         result = channel.queue_declare(queue='', exclusive=True)
-#         queue_name = result.method.queue
-#         channel.queue_bind(exchange='message', queue=queue_name, routing_key=f"producer.{producer_id}")
-
-#         # Continuously consume messages from RabbitMQ
-#         def callback(ch, method, properties, body):
-#             # Process the message and prepare SSE data
-#             data = json.loads(body)
-
-#             # Yield the SSE event data
-#             yield f'data: {json.dumps(data)}\n\n'
-
-#             ch.basic_ack(delivery_tag=method.delivery_tag)
-
-
-#         # Start consuming messages from RabbitMQ
-#         channel.basic_consume(queue=queue_name, on_message_callback=callback)
-
-#         while True:
-#             connection.process_data_events()
-
-#             time.sleep(1)
-
-#     return Response(event_generator(), mimetype='text/event-stream')
 
 
 if __name__ == '__main__':

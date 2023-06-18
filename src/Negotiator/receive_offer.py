@@ -3,7 +3,7 @@ import json
 from negotiator import Offer, db
 
 
-url = 'amqps://etsrqkzu:i9KtLs0FqK0gVoVPAt_n65AzypRIfwE5@rat.rmq2.cloudamqp.com/etsrqkzu'
+url = 'your_own'
 connection = pika.BlockingConnection(pika.URLParameters(url))
 # connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
 channel = connection.channel()
